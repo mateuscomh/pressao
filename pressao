@@ -1,76 +1,29 @@
-#!/bin/sh
-# Dont ultrapass '|'
+#!/usr/bin/env sh
+
+#Copyright <2023> <Jefferson Rocha>
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #--------HEADER---------------------------------------------------------------|
-#AUTOR
-#  Jefferson Rocha <lrcjefferson@gmail.com>
-#
+#EDITOR
+#   Matheus Martins <3mhenrique@gmail.com>
 #PROGRAMA
 #  Pressao - Controle de Pressão Arterial
-#
 #DESCRIÇÃO
 #  Dados de inserção para controle de pressão arterial.
-#
-#LICENÇA
-#  MIT - https://notabug.org/jeffersonrocha/Pressao/raw/master/LICENSE
-#
-#CHANGELOG
-#  **Versão 1.2 - Jefferson Rocha
-#   -Inserido Opção inline de procura por data.
-#   -Inserido Opção de ajuda.
-#
-#
-#  **Versão 1.3 - Jefferson Rocha
-#   -Inserido a opção de 'bloqueio' e 'desbloqueio' do banco de dados com o
-#   comando 'chattr'.
-#
-#   -Tirado a Var '$HOME' das váriaveis '$dir e $backup' e colocado caminho
-#   absoluto, retirando assim possíveis erros futuros.
-#
-#   -Substituido algumas váriaveis:
-#   'dir' por: diretorio_principal
-#   'dir_bp' por: banco_de_dados
-#   'backup' por: diretorio_backup
 #-----------------------------------------------------------------------------|
-
-#--------------CONFIGURACAO--------------#
-# INSIRA OS DADOS e Configurações aqui!
-
-# Nome COMPLETO
-Nome="" 
-
-# Formato exemplo: 15/12/1985                   
-Data_de_nascimento=""
-
-# Exemplo "Hidrocloritiazida - 50mg, Besilapin - 5mg"   
-Remedios=""
-
-# Diretorio do bd
-# Mude se necessário!
-diretorio_principal="/home/slackjeff/press"
-
-# Banco de dados
-# mude se necessário.
-banco_de_dados="$diretorio_principal/bd.txt"
-
-# Caminho para Backup
-# Mude se necessário.
-diretorio_backup="/home/slackjeff/bd-pressao-bkp.txt"                
-
-#=========== NÃO MEXER DAQUI PARA BAIXO! ===========#
+source PARAM
 
 #--------------VARS--------------#
-
-versao="1.2"
-
-#--------------------------------#
+versao="1.3"
 
 #--------------FUNCOES--------------#
-
 _adicionar(){
 
 # Inserindo dados no banco de dados.
 if [ -e "$banco_de_dados" ] && [ -w "$banco_de_dados" ]; then
-      if echo "  $Data          $Hora             $Pressao" >> "$banco_de_dados"; then
+      if echo "  $Data          $Hora             $Pressao          $OBS " >> "$banco_de_dados"; then
             echo "Dados inseridos com sucesso!"
       else
             echo "Houve um erro."
@@ -97,28 +50,25 @@ cat >> "$banco_de_dados" <<EOF
   ============================
   
    **NOTA
-   Fazer medição TODOS os dias as X horas da manhã.
-   Medicando com os remédios:
+   Fazer medição TODOS os dias as 8 horas da manhã.
+   Medicando com os remédios: $Remedios
 
   -----------------------------------------------------------------------
 
 
 
-    DATA              HORA            PRESSÃO
-  ========          =========       ===========          
+    DATA              HORA            PRESSÃO            OBS
+  ========          =========       ===========      ===========          
 EOF
 
 }
-
 
 _ajuda(){
 cat << EOF
 Pressao - Controle de Pressão Arterial $versao
 Copyright (C) 2018 Jefferson Rocha <lrcjefferson@gmail.com>
-License: MIT - https://notabug.org/jeffersonrocha/Pressao/raw/master/LICENSE
-Banco de dados utilizado é em Texto puro, para os mais familiarizados Plain-Text.
-Este formato é mais limpo, leve e sem frufrus adicionais.
-BUGS: lrcjefferson@gmail.com
+License: MIT 
+Banco de dados utilizado é em texto puro. Formato mais limpo e leve.
 
 Sintaxe: pressao [OPÇÃO]
 
@@ -131,14 +81,13 @@ Opções Disponíveis:
         Qual à Hora: 15:20
         Qual à Pressão: 12x7
         
-        *É importante não deixar nenhum campo nulo, se não o programa fecha.
+        *É importante não deixar nenhum campo obrigatório nulo, se não o programa fecha.
         No banco de dados será armazenado no formato em linha e caso o usuário peça para 'visualizar'
         será visualizado neste formato:
 
-           DATA              HORA            PRESSÃO
-         ========          =========       ===========          
-        18/05/2015           15:20             12x7
-
+           DATA              HORA            PRESSÃO	      OBS
+         ========          =========       ==========	   ==========          
+        18/05/2015           15:20             12x7         Info:Info
 
     -v, visualizar
         Visualize todo banco de dados, contendo todas as informações como 'Data' 'Hora' e 'Pressão'.
@@ -158,11 +107,7 @@ EOF
 
 }
 
-#----------------------------------#
-
-
 #--------------TESTES--------------#
-
 # Se diretorio não existir, crie!
 [ ! -e "$diretorio_principal" ] && { mkdir "$diretorio_principal" ;}
 
@@ -172,14 +117,10 @@ EOF
 # chattr existe?
 [ $(type -P chattr) ] && comando_chattr="on"
 
-#---------------------------------#
-
-
 #--------------Inicio--------------#
-
 case $1 in
     -i|inserir)
-         for dados in "Data" "Hora" "Pressao"; do
+         for dados in "Data" "Hora" "Pressao" "OBS"; do
               read -p "Qual à ${dados}: " "${dados}"
               # Conferindo se dado está nulo, se está tchau.
               for null in "$Data" "$Hora" "$Pressao"; do
@@ -253,5 +194,5 @@ case $1 in
 
    -v|versao) echo "Pressao versão $versao" ;;    
 
-   *|-a|ajuda) _ajuda ;; # Chamda função _ajuda.
+   *|-a|ajuda) _ajuda ;; # Chamada função _ajuda.
 esac
