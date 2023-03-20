@@ -13,7 +13,8 @@
 #DESCRIÇÃO
 #  Dados de inserção para controle de pressão arterial.
 #-----------------------------------------------------------------------------|
-source PARAM
+
+source /gitclones/pressao/PARAM
 
 #--------------VARS--------------#
 versao="1.3"
@@ -50,8 +51,7 @@ cat >> "$banco_de_dados" <<EOF
   ============================
   
    **NOTA
-   Fazer medição TODOS os dias as 8 horas da manhã.
-   Medicando com os remédios: $Remedios
+   Medicando com: $Remedios
 
   -----------------------------------------------------------------------
 
@@ -154,7 +154,9 @@ case $1 in
         done       
     ;;
 
-   backup) cat "$banco_de_dados" >> "$diretorio_backup" ;;
+   backup) cat "$banco_de_dados" >> "$diretorio_backup" && \
+      echo "Backup em $diretorio_backup com sucesso" || \
+      echo "erro backup";;
 
    bloquear)
           # Chattr existe? ok, vamos ver se é root.
