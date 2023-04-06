@@ -101,8 +101,8 @@ Opções Disponíveis:
 
         Será exibido todas a(s) data(s) que coinsidirem.
 
-    -a, ajuda
-        Mostra à ajuda completa do programa e sai.
+    -h, help 
+        Mostra à ajuda completa do programa.
 EOF
 
 }
@@ -196,5 +196,5 @@ case $1 in
 
    -v|versao) echo "Pressao versão $versao" ;;    
 
-   *|-a|ajuda) _ajuda ;; # Chamada função _ajuda.
+   *|-h|ajuda) _ajuda ;; # Chamada função _ajuda.
 esac
