@@ -1,0 +1,20 @@
+# Nome COMPLETO
+Nome="" 
+
+# Formato exemplo: 15/12/1985                   
+Data_de_nascimento=""
+
+# Exemplo "Hidrocloritiazida - 50mg, Besilapin - 5mg"   
+Remedios=""
+
+# Diretorio do bd
+# Mude se necessário!
+diretorio_principal="/home/${USER}/press"
+
+# Banco de dados
+# mude se necessário.
+banco_de_dados="/home/${USER}/press/bd.txt"
+
+# Caminho para Backup
+# Mude se necessário.
+diretorio_backup=""  
